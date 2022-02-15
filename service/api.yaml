@@ -1,0 +1,117 @@
+openapi: 3.0.0
+info:
+  description: ""
+  version: "1.0.0"
+  title: "Сервис получения рецептов для мобильного приложения"
+paths:
+  /auth/:
+    get:
+      summary: 'Получение ссылки на авторизацию через ЕСИА'
+      responses:
+        '200':
+          description: 'Успех'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/esia_link'
+
+  /prescriptions/:
+    get:
+      summary: 'Получение списка рецептов'
+      parameters:
+        -
+          in: header
+          name: code
+          required: true
+          schema:
+            type: string
+        -
+          in: header
+          name: status
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Успех'
+          content:
+            application/json:
+              schema:
+                type: 'array'
+                items:
+                  $ref: '#/components/schemas/prescription'
+  /prescriptions/{id}:
+    get:
+      summary: 'Получение рецепта'
+      parameters:
+        -
+          in: header
+          name: code
+          required: true
+          schema:
+            type: string
+        -
+          in: header
+          name: status
+          required: true
+          schema:
+            type: string
+        -
+          in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Успех'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/prescription'
+
+components:
+  schemas:
+    esia_link:
+      type: object
+      required: ['link']
+      properties:
+        link:
+          type: 'string'
+          description: 'Ссылка на страницу авторизации'
+
+    prescription:
+      type: object
+      required: ['id', 'series', 'number', 'mnn', 'dtd', 'signa', 'is_replacement_forbidden', 'date_of_issue', 'days_before_expiration']
+      properties:
+        id:
+          type: 'integer'
+          description: 'Идентификатор рецепта'
+        series:
+          type: 'string'
+          description: 'Серия'
+        number:
+          type: 'string'
+          description: 'Номер'
+        mnn:
+          type: 'string'
+          description: 'МНН'
+        trade_name:
+          type: 'string'
+          description: 'Торговое наименование'
+        dtd:
+          type: 'string'
+        signa:
+          type: 'string'
+        is_replacement_forbidden:
+          type: 'boolean'
+          description: 'Признак, что медикамент нельзя заменять.'
+        date_of_issue:
+          type: 'string'
+          description: 'Дата выписки рецепта'
+        days_before_expiration:
+          type: 'integer'
+          description: 'Дней до истечения срока'
+        pdf:
+          type: 'string'
+          description: 'PDF-представление рецепта'
